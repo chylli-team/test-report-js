@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build-perl-test:
-    name: Build & Test
+    name: Build & Test perl
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3     # checkout the repo
@@ -23,7 +23,7 @@ jobs:
           path: reports/*.xml    # Path to test results
           reporter: perl-junit        # Format of test results
   build-test:
-    name: Build & Test
+    name: Build & Test js
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -40,7 +40,7 @@ jobs:
           name: JEST Tests  js          # Name of the check run which will be created
           path: reports/jest-*.xml    # Path to test results
           reporter: jest-junit        # Format of test results
-          working-directory: ./js
+          #working-directory: ./js
   # build-java-test:
   #     name: Build & Test
   #     runs-on: ubuntu-latest
