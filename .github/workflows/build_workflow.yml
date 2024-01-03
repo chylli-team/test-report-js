@@ -1,0 +1,55 @@
+name: CI
+run-name: CI
+on:
+  push:
+env:
+  PERL_TEST_HARNESS_DUMP_TAP: /tmp/test-output
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build-perl-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3     # checkout the repo
+      - run: prove --norc --formatter TAP::Formatter::JUnit t/test.t
+
+      - name: Test Report
+        uses: deriv-com/test-reporter@main
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: Perl Tests            # Name of the check run which will be created
+          path: reports/*.xml    # Path to test results
+          reporter: perl-junit        # Format of test results
+  build-test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./js
+    steps:
+      - uses: actions/checkout@v3     # checkout the repo
+      - run: npm ci                   # install packages
+      - run: npm test                 # run tests (configured to use jest-junit reporter)
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: JEST Tests            # Name of the check run which will be created
+          path: reports/jest-*.xml    # Path to test results
+          reporter: jest-junit        # Format of test results
+  # build-java-test:
+  #     name: Build & Test
+  #     runs-on: ubuntu-latest
+  #     steps:
+  #       - uses: actions/checkout@v3     # checkout the repo
+  
+  #       - name: Test Report
+  #         uses: deriv-com/test-reporter@main
+  #         if: success() || failure()    # run this step even if previous step failed
+  #         with:
+  #           name: Java Tests            # Name of the check run which will be created
+  #           path: reports/jest-*.xml    # Path to test results
+  #           reporter: java-junit        # Format of test results
