@@ -4,5 +4,7 @@ module.exports = {
     //roots: ['<rootDir>/src'],
     testMatch: ['<rootDir>/test/*.test.ts'],
     reporters: ['default', ['jest-junit', {outputDirectory:'reports'}]],
-    
+    moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+  },
 };
